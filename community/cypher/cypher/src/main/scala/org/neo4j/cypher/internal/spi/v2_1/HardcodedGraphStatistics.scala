@@ -17,16 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.neo4j.cypher
+package org.neo4j.cypher.internal.spi.v2_1
 
-sealed abstract class CypherVersion(versionName: String) extends CypherOption(versionName)
 
-case object CypherVersion extends CypherOptionCompanion[CypherVersion] {
-  case object v1_9 extends CypherVersion("1.9")
-  case object v2_1 extends CypherVersion("2.1")
-  case object v2_2 extends CypherVersion("2.2")
-  case object v2_3 extends CypherVersion("2.3")
-
-  val default = v2_3
-  val all: Set[CypherVersion] = Set(v1_9, v2_1, v2_2, v2_3)
-}
+//This class should live here, but until we have to touch
+//disk, let's have it in the compiler. Convenient.
+case object HardcodedGraphStatistics
+  extends org.neo4j.cypher.internal.compiler.v2_1.HardcodedGraphStatisticsValues

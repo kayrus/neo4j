@@ -83,8 +83,8 @@ class CypherCompiler(graph: GraphDatabaseService,
   private val factory = new PlannerFactory(graph, kernelAPI, kernelMonitors, log, config)
   private val planners: PlannerCache = new PlannerCache(factory)
 
-  private final val VERSIONS_WITH_FIXED_PLANNER: Set[CypherVersion] = Set(v1_9)
-  private final val VERSIONS_WITH_FIXED_RUNTIME: Set[CypherVersion] = Set(v1_9, v2_2)
+  private final val VERSIONS_WITH_FIXED_PLANNER: Set[CypherVersion] = Set(v1_9, v2_1)
+  private final val VERSIONS_WITH_FIXED_RUNTIME: Set[CypherVersion] = Set(v1_9, v2_1, v2_2)
 
   @throws(classOf[SyntaxException])
   def preParseQuery(queryText: String): PreParsedQuery = {
@@ -132,6 +132,7 @@ class CypherCompiler(graph: GraphDatabaseService,
     preParsedQuery.version match {
       case CypherVersion.v2_3 => planners(PlannerSpec_v2_3(planner, runtime)).produceParsedQuery(preParsedQuery, tracer)
       case CypherVersion.v2_2 => planners(PlannerSpec_v2_2(planner)).produceParsedQuery(preParsedQuery, tracer)
+      case CypherVersion.v2_1 => planners(PlannerSpec_v2_1).parseQuery(preParsedQuery.statement)
       case CypherVersion.v1_9 => planners(PlannerSpec_v1_9).parseQuery(preParsedQuery.statement)
     }
   }

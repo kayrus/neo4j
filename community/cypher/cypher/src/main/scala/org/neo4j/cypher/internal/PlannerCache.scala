@@ -19,7 +19,7 @@
  */
 package org.neo4j.cypher.internal
 
-import org.neo4j.cypher.internal.compatibility.{CompatibilityFor1_9, CompatibilityFor2_2, CompatibilityFor2_2Cost, CompatibilityFor2_2Rule, CompatibilityFor2_3, CompatibilityFor2_3Cost, CompatibilityFor2_3Rule}
+import org.neo4j.cypher.internal.compatibility.{CompatibilityFor1_9, CompatibilityFor2_1, CompatibilityFor2_2, CompatibilityFor2_2Cost, CompatibilityFor2_2Rule, CompatibilityFor2_3, CompatibilityFor2_3Cost, CompatibilityFor2_3Rule}
 import org.neo4j.cypher.internal.compiler.v2_3.CypherCompilerConfiguration
 import org.neo4j.cypher.{CypherPlanner, CypherRuntime}
 import org.neo4j.graphdb.GraphDatabaseService
@@ -33,6 +33,8 @@ sealed trait PlannerSpec
 
 case object PlannerSpec_v1_9 extends PlannerSpec
 
+final case class PlannerSpec_v2_1(planner: CypherPlanner) extends PlannerSpec
+
 final case class PlannerSpec_v2_2(planner: CypherPlanner) extends PlannerSpec
 
 final case class PlannerSpec_v2_3(planner: CypherPlanner, runtime: CypherRuntime) extends PlannerSpec
@@ -41,6 +43,8 @@ class PlannerFactory(graph: GraphDatabaseService, kernelAPI: KernelAPI, kernelMo
                      config: CypherCompilerConfiguration) {
 
   def create(spec: PlannerSpec_v1_9.type) = CompatibilityFor1_9(graph, config.queryCacheSize, kernelMonitors)
+
+  def create(spec: PlannerSpec_v2_1.type) = CompatibilityFor2_1(graph, config.queryCacheSize, kernelMonitors, kernelAPI)
 
   def create(spec: PlannerSpec_v2_2) = spec.planner match {
     case CypherPlanner.rule => CompatibilityFor2_2Rule(graph, config.queryCacheSize, config.statsDivergenceThreshold,
@@ -59,9 +63,11 @@ class PlannerFactory(graph: GraphDatabaseService, kernelAPI: KernelAPI, kernelMo
 class PlannerCache(factory: PlannerFactory)  {
   private val cache_v1_9 = new CachingValue[CompatibilityFor1_9]
   private val cache_v2_2 = new mutable.HashMap[PlannerSpec_v2_2, CompatibilityFor2_2]
+  private val cache_v2_1 = new CachingValue[CompatibilityFor2_1]
   private val cache_v2_3 = new mutable.HashMap[PlannerSpec_v2_3, CompatibilityFor2_3]
 
   def apply(spec: PlannerSpec_v1_9.type) = cache_v1_9.getOrElseUpdate(factory.create(spec))
+  def apply(spec: PlannerSpec_v2_1.type) = cache_v2_1.getOrElseUpdate(factory.create(spec))
   def apply(spec: PlannerSpec_v2_2) = cache_v2_2.getOrElseUpdate(spec, factory.create(spec))
   def apply(spec: PlannerSpec_v2_3) = cache_v2_3.getOrElseUpdate(spec, factory.create(spec))
 }

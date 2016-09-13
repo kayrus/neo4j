@@ -219,6 +219,45 @@
     </dependency>
     <dependency>
       <groupId>org.neo4j</groupId>
+      <artifactId>neo4j-cypher-compiler-2.1</artifactId>
+      <version>2.1.8</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.neo4j</groupId>
+          <artifactId>neo4j-kernel</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.neo4j</groupId>
+          <artifactId>neo4j-lucene-index</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.neo4j</groupId>
+          <artifactId>neo4j-graph-matching</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.neo4j</groupId>
+          <artifactId>neo4j-graph-algo</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.neo4j</groupId>
+          <artifactId>neo4j-cypher-commons</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-library</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.parboiled</groupId>
+          <artifactId>parboiled-scala_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.sf.opencsv</groupId>
+          <artifactId>opencsv</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.neo4j</groupId>
       <artifactId>neo4j-cypher-compiler-2.2_2.11</artifactId>
       <version>2.2.10</version>
       <exclusions>
